@@ -20,8 +20,12 @@ export default async function handler(req, res) {
             
             // 역별 필터링
             if (station === '동대문역사문화공원') {
-                // 4호선만 필터링
-                filteredTrains = data.realtimeArrivalList.filter(train => train.subwayId === '4');
+                // 4호선 하행선(오이도행, 사당행)만 필터링
+                filteredTrains = data.realtimeArrivalList.filter(train => 
+                    train.subwayId === '4' && 
+                    train.updnLine === '하행' && 
+                    (train.trainLineNm.includes('오이도') || train.trainLineNm.includes('사당'))
+                );
             } else if (station === '청라국제도시') {
                 // 서울행만 필터링 (상행선)
                 filteredTrains = data.realtimeArrivalList.filter(train => 
