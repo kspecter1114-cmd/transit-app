@@ -3,22 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>701번 버스 정보</title>
+    <title>701번 버스 시간표</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
         <a href="index.html" class="back-btn">← 뒤로</a>
         <h1>🚌 701번 버스</h1>
-        
-        <!-- 실시간 도착정보 -->
-        <div class="time-table">
-            <h3>🚏 정류장 89215 실시간 도착정보</h3>
-            <div id="real-time-info">
-                <div class="loading">정보를 불러오는 중...</div>
-            </div>
-            <button class="refresh-btn" onclick="getBusArrival()">새로고침</button>
-        </div>
         
         <!-- 시간표 이미지 -->
         <div class="time-table">
@@ -30,47 +21,5 @@
             </div>
         </div>
     </div>
-    
-    <script>
-        // 실시간 버스 도착정보 가져오기
-        async function getBusArrival() {
-            const infoDiv = document.getElementById('real-time-info');
-            infoDiv.innerHTML = '<div class="loading">정보를 불러오는 중...</div>';
-            
-            try {
-                // API 복구 전까지 랜덤 더미 데이터로 실시간 느낌 구현
-                setTimeout(() => {
-                    const randomTime1 = Math.floor(Math.random() * 15) + 1; // 1-15분
-                    const randomTime2 = randomTime1 + Math.floor(Math.random() * 10) + 5; // +5-15분
-                    const currentTime = new Date().toLocaleTimeString();
-                    
-                    infoDiv.innerHTML = `
-                        <div class="time-item">
-                            <span><strong>701번</strong></span>
-                            <span class="arrival-time">${randomTime1}분 후 도착</span>
-                        </div>
-                        <div class="time-item">
-                            <span><strong>701번</strong></span>
-                            <span class="arrival-time">${randomTime2}분 후 도착</span>
-                        </div>
-                        <div class="time-item">
-                            <span style="font-size: 12px; color: #999;">마지막 업데이트: ${currentTime}</span>
-                            <span></span>
-                        </div>
-                    `;
-                }, 500);
-                
-            } catch (error) {
-                infoDiv.innerHTML = '<div class="error">정보를 불러올 수 없습니다.</div>';
-            }
-        }
-        
-        // 페이지 로드 시 자동 실행
-        window.onload = function() {
-            getBusArrival();
-            // 5초마다 자동 새로고침
-            setInterval(getBusArrival, 5000);
-        };
-    </script>
 </body>
 </html>
