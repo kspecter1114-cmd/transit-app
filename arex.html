@@ -106,8 +106,22 @@
                 const departureTime = new Date();
                 departureTime.setHours(hour, minute, 0, 0);
                 
-                const timeDiff = Math.floor((departureTime - now) / (1000 * 60));
-                const remainingText = timeDiff <= 0 ? '곧 출발' : `${timeDiff}분 후`;
+                const timeDiffMs = departureTime - now;
+                const totalSeconds = Math.floor(timeDiffMs / 1000);
+                
+                let remainingText;
+                if (totalSeconds <= 0) {
+                    remainingText = '곧 출발';
+                } else {
+                    const minutes = Math.floor(totalSeconds / 60);
+                    const seconds = totalSeconds % 60;
+                    
+                    if (minutes > 0) {
+                        remainingText = `${minutes}분 ${seconds}초 후`;
+                    } else {
+                        remainingText = `${seconds}초 후`;
+                    }
+                }
                 
                 html += `
                     <div class="time-item">
