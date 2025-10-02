@@ -162,10 +162,9 @@
                     });
                     cheongnaDiv.innerHTML = cheongnaHtml;
                 } else {
-                    // API 실패시 더미 데이터
+                    // API 실패시 더미 데이터 (서울행만)
                     const cheongnaTrains = [
-                        { line: '공항철도', dest: '서울역', time: Math.floor(Math.random() * 8) + 2 },
-                        { line: '공항철도', dest: '인천공항', time: Math.floor(Math.random() * 12) + 5 }
+                        { line: '공항철도', dest: '서울역', time: Math.floor(Math.random() * 8) + 2 }
                     ];
                     
                     let cheongnaHtml = '';
@@ -208,11 +207,10 @@
                     });
                     dongdaemunDiv.innerHTML = dongdaemunHtml;
                 } else {
-                    // API 실패시 더미 데이터
+                    // API 실패시 더미 데이터 (4호선만)
                     const dongdaemunTrains = [
-                        { line: '2호선', dest: '을지로입구', time: Math.floor(Math.random() * 5) + 1 },
                         { line: '4호선', dest: '동대문', time: Math.floor(Math.random() * 6) + 2 },
-                        { line: '5호선', dest: '청구', time: Math.floor(Math.random() * 7) + 3 }
+                        { line: '4호선', dest: '혜화', time: Math.floor(Math.random() * 8) + 4 }
                     ];
                     
                     let dongdaemunHtml = '';
