@@ -62,7 +62,8 @@
             }
             
             try {
-                const response = await fetch('/api/bus?stationId=89295');
+                // 티맵 API 시도
+                const response = await fetch('/api/tmap-bus?stationId=89295');
                 const result = await response.json();
                 const currentTime = new Date().toLocaleTimeString();
                 
@@ -85,7 +86,7 @@
                             `;
                         });
                         infoDiv.innerHTML = html;
-                        updateDiv.textContent = `마지막 업데이트: ${currentTime}`;
+                        updateDiv.textContent = `마지막 업데이트: ${currentTime} (티맵)`;
                         return;
                     }
                 }
@@ -117,7 +118,8 @@
             }
             
             try {
-                const response = await fetch('/api/bus?stationId=89215');
+                // 티맵 API 시도
+                const response = await fetch('/api/tmap-bus?stationId=89215');
                 const result = await response.json();
                 const currentTime = new Date().toLocaleTimeString();
                 
@@ -140,7 +142,7 @@
                             `;
                         });
                         infoDiv.innerHTML = html;
-                        updateDiv.textContent = `마지막 업데이트: ${currentTime}`;
+                        updateDiv.textContent = `마지막 업데이트: ${currentTime} (티맵)`;
                         return;
                     }
                 }
