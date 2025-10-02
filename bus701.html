@@ -20,39 +20,59 @@
                 <h4>🌅 평일 운행시간</h4>
                 <div id="weekday-schedule">
                     <!-- 평일 시간표가 여기에 표시됩니다 -->
-                    <div class="loading">시간표 데이터를 입력해주세요</div>
                 </div>
             </div>
             
             <div class="direction-section">
-                <h4>🌆 주말/공휴일 운행시간</h4>
+                <h4>🌆 토요일/공휴일 운행시간</h4>
                 <div id="weekend-schedule">
                     <!-- 주말 시간표가 여기에 표시됩니다 -->
-                    <div class="loading">시간표 데이터를 입력해주세요</div>
                 </div>
             </div>
             
             <p style="font-size: 11px; color: #999; text-align: center; margin-top: 15px;">
                 운행구간: 청라국제도시 ↔ 인천터미널<br>
-                배차간격: 평일 10-15분, 주말 15-20분
+                평일 91회 운행 | 토요일/공휴일 74회 운행
             </p>
         </div>
     </div>
     
     <script>
-        // 701번 버스 시간표 데이터 (입력 대기 중)
+        // 701번 버스 시간표 데이터
         const bus701Schedule = {
             weekday: {
-                // 평일 시간표 - 데이터 입력 필요
-                firstBus: "05:30",
-                lastBus: "23:00",
-                times: [] // 시간 배열 입력 필요
+                firstBus: "00:08",
+                lastBus: "23:50",
+                times: [
+                    "00:08", "00:18", "00:32", "04:35", "04:55", "05:18", "05:35", "05:51", 
+                    "06:06", "06:15", "06:26", "06:37", "06:47", "06:55", "07:03", "07:13", 
+                    "07:21", "07:29", "07:37", "07:48", "07:58", "08:07", "08:18", "08:31", 
+                    "08:45", "08:55", "09:08", "09:21", "09:39", "09:54", "10:04", "10:14", 
+                    "10:30", "10:46", "11:00", "11:14", "11:28", "11:46", "12:00", "12:15", 
+                    "12:28", "12:45", "13:04", "13:17", "13:30", "13:45", "14:00", "14:18", 
+                    "14:34", "14:54", "15:13", "15:28", "15:45", "16:04", "16:17", "16:28", 
+                    "16:46", "17:00", "17:11", "17:25", "17:34", "17:45", "17:58", "18:10", 
+                    "18:19", "18:28", "18:39", "18:47", "18:57", "19:05", "19:13", "19:25", 
+                    "19:38", "19:50", "20:00", "20:08", "20:18", "20:33", "20:44", "20:58", 
+                    "21:11", "21:26", "21:40", "21:56", "22:13", "22:30", "22:42", "22:59", 
+                    "23:12", "23:30", "23:50"
+                ]
             },
             weekend: {
-                // 주말 시간표 - 데이터 입력 필요
-                firstBus: "06:00",
-                lastBus: "22:30",
-                times: [] // 시간 배열 입력 필요
+                firstBus: "00:15",
+                lastBus: "23:50",
+                times: [
+                    "00:15", "00:30", "04:35", "04:55", "05:20", "05:38", "05:55", "06:10", 
+                    "06:28", "06:47", "07:06", "07:26", "07:46", "08:03", "08:20", "08:28", 
+                    "08:33", "08:47", "08:52", "09:08", "09:28", "09:47", "10:03", "10:23", 
+                    "10:40", "10:58", "11:14", "11:30", "11:48", "12:03", "12:19", "12:35", 
+                    "12:48", "13:05", "13:20", "13:37", "13:57", "14:11", "14:23", "14:43", 
+                    "15:03", "15:20", "15:36", "15:54", "16:10", "16:26", "16:46", "17:03", 
+                    "17:22", "17:41", "17:56", "18:10", "18:27", "18:46", "18:58", "19:12", 
+                    "19:25", "19:38", "19:51", "20:04", "20:18", "20:34", "20:46", "20:58", 
+                    "21:12", "21:30", "21:45", "21:57", "22:14", "22:32", "22:51", "23:10", 
+                    "23:30", "23:50"
+                ]
             }
         };
         
@@ -62,30 +82,26 @@
             const weekendDiv = document.getElementById('weekend-schedule');
             
             // 평일 시간표
-            if (bus701Schedule.weekday.times.length > 0) {
-                let weekdayHtml = `<p style="margin-bottom: 10px;"><strong>첫차:</strong> ${bus701Schedule.weekday.firstBus} | <strong>막차:</strong> ${bus701Schedule.weekday.lastBus}</p>`;
-                weekdayHtml += '<div class="schedule-grid">';
-                
-                bus701Schedule.weekday.times.forEach(time => {
-                    weekdayHtml += `<span class="time-badge">${time}</span>`;
-                });
-                
-                weekdayHtml += '</div>';
-                weekdayDiv.innerHTML = weekdayHtml;
-            }
+            let weekdayHtml = `<p style="margin-bottom: 10px;"><strong>첫차:</strong> ${bus701Schedule.weekday.firstBus} | <strong>막차:</strong> ${bus701Schedule.weekday.lastBus}</p>`;
+            weekdayHtml += '<div class="schedule-grid">';
+            
+            bus701Schedule.weekday.times.forEach(time => {
+                weekdayHtml += `<span class="time-badge">${time}</span>`;
+            });
+            
+            weekdayHtml += '</div>';
+            weekdayDiv.innerHTML = weekdayHtml;
             
             // 주말 시간표
-            if (bus701Schedule.weekend.times.length > 0) {
-                let weekendHtml = `<p style="margin-bottom: 10px;"><strong>첫차:</strong> ${bus701Schedule.weekend.firstBus} | <strong>막차:</strong> ${bus701Schedule.weekend.lastBus}</p>`;
-                weekendHtml += '<div class="schedule-grid">';
-                
-                bus701Schedule.weekend.times.forEach(time => {
-                    weekendHtml += `<span class="time-badge">${time}</span>`;
-                });
-                
-                weekendHtml += '</div>';
-                weekendDiv.innerHTML = weekendHtml;
-            }
+            let weekendHtml = `<p style="margin-bottom: 10px;"><strong>첫차:</strong> ${bus701Schedule.weekend.firstBus} | <strong>막차:</strong> ${bus701Schedule.weekend.lastBus}</p>`;
+            weekendHtml += '<div class="schedule-grid">';
+            
+            bus701Schedule.weekend.times.forEach(time => {
+                weekendHtml += `<span class="time-badge">${time}</span>`;
+            });
+            
+            weekendHtml += '</div>';
+            weekendDiv.innerHTML = weekendHtml;
         }
         
         // 페이지 로드 시 실행
