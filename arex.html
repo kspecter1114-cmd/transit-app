@@ -316,13 +316,13 @@
             generateArexSchedule();
             getStationInfo();
             
-            // 1초마다 시간 업데이트
-            setInterval(updateCurrentTime, 1000);
+            // 1초마다 시간 및 공항철도 시간표 업데이트
+            setInterval(() => {
+                updateCurrentTime();
+                generateArexSchedule();
+            }, 1000);
             
-            // 1분마다 공항철도 시간표 업데이트
-            setInterval(generateArexSchedule, 60000);
-            
-            // 5초마다 출퇴근 시작역 정보만 업데이트
+            // 5초마다 출퇴근 시작역 정보 업데이트
             setInterval(getStationInfo, 5000);
         };
     </script>
