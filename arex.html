@@ -51,28 +51,30 @@
             <button class="refresh-btn" onclick="getStationInfo()">새로고침</button>
         </div>
         
-        <!-- 서울역 실시간 시간표 -->
+        <!-- 서울역 공항철도 시간표 -->
         <div class="time-table">
             <h3>🚉 서울역 공항철도 시간표</h3>
             <p style="color: #666; font-size: 14px; margin-bottom: 15px;">현재 시간: <span id="current-time"></span></p>
             
             <div class="direction-section">
-                <h4>🛫 인천공항 방향</h4>
-                <div id="airport-schedule">
-                    <div class="loading">시간표를 불러오는 중...</div>
+                <h4>🛫 서울역 출발 → 인천공항 방향</h4>
+                <div id="seoul-departure-schedule">
+                    <div class="time-item"><span><strong>05:20</strong> → 인천공항</span><span>직통</span></div>
+                    <div class="time-item"><span><strong>05:53</strong> → 인천공항</span><span>일반</span></div>
+                    <div class="time-item"><span><strong>06:00</strong> → 인천공항</span><span>직통</span></div>
+                    <div class="time-item"><span><strong>06:13</strong> → 인천공항</span><span>일반</span></div>
+                    <div class="time-item"><span><strong>06:20</strong> → 인천공항</span><span>직통</span></div>
+                    <div class="time-item"><span><strong>06:33</strong> → 인천공항</span><span>일반</span></div>
+                    <div class="time-item"><span><strong>06:40</strong> → 인천공항</span><span>직통</span></div>
+                    <div class="time-item"><span><strong>06:53</strong> → 인천공항</span><span>일반</span></div>
+                    <div class="time-item"><span><strong>07:00</strong> → 인천공항</span><span>직통</span></div>
+                    <div class="time-item"><span><strong>07:13</strong> → 인천공항</span><span>일반</span></div>
                 </div>
-                <p id="airport-update" style="font-size: 11px; color: #999; text-align: right; margin-top: 5px;"></p>
+                <p style="font-size: 11px; color: #999; text-align: center; margin-top: 10px;">
+                    직통: 43분 소요 | 일반: 56분 소요<br>
+                    6-9시: 10분 간격, 평시: 15-20분 간격
+                </p>
             </div>
-            
-            <div class="direction-section">
-                <h4>🏙️ 서울역 방향</h4>
-                <div id="seoul-schedule">
-                    <div class="loading">시간표를 불러오는 중...</div>
-                </div>
-                <p id="seoul-update" style="font-size: 11px; color: #999; text-align: right; margin-top: 5px;"></p>
-            </div>
-            
-            <button class="refresh-btn" onclick="getArexSchedule()">새로고침</button>
         </div>
     </div>
     
@@ -264,17 +266,13 @@
         // 페이지 로드 시 자동 실행
         window.onload = function() {
             updateCurrentTime();
-            getArexSchedule();
             getStationInfo();
             
             // 1초마다 시간 업데이트
             setInterval(updateCurrentTime, 1000);
             
-            // 5초마다 시간표 및 역 정보 업데이트
-            setInterval(() => {
-                getArexSchedule();
-                getStationInfo();
-            }, 5000);
+            // 5초마다 출퇴근 시작역 정보만 업데이트 (서울역 시간표는 고정)
+            setInterval(getStationInfo, 5000);
         };
     </script>
 </body>
