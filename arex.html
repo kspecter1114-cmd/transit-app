@@ -162,21 +162,10 @@
                     });
                     cheongnaDiv.innerHTML = cheongnaHtml;
                 } else {
-                    // API 실패시 더미 데이터 (서울행만)
-                    const cheongnaTrains = [
-                        { line: '공항철도', dest: '서울역', time: Math.floor(Math.random() * 8) + 2 }
-                    ];
-                    
-                    let cheongnaHtml = '';
-                    cheongnaTrains.forEach(train => {
-                        cheongnaHtml += `
-                            <div class="time-item">
-                                <span><strong>${train.line}</strong> → ${train.dest}</span>
-                                <span class="arrival-time">${train.time}분 후</span>
-                            </div>
-                        `;
-                    });
-                    cheongnaDiv.innerHTML = cheongnaHtml;
+                    // API 실패시 에러 메시지
+                    if (cheongnaDiv.innerHTML.includes('loading')) {
+                        cheongnaDiv.innerHTML = '<div class="error">지하철 정보를 불러올 수 없습니다.</div>';
+                    }
                 }
                 
                 cheongnaUpdateDiv.textContent = `마지막 업데이트: ${currentTime}`;
@@ -207,22 +196,10 @@
                     });
                     dongdaemunDiv.innerHTML = dongdaemunHtml;
                 } else {
-                    // API 실패시 더미 데이터 (4호선만)
-                    const dongdaemunTrains = [
-                        { line: '4호선', dest: '동대문', time: Math.floor(Math.random() * 6) + 2 },
-                        { line: '4호선', dest: '혜화', time: Math.floor(Math.random() * 8) + 4 }
-                    ];
-                    
-                    let dongdaemunHtml = '';
-                    dongdaemunTrains.forEach(train => {
-                        dongdaemunHtml += `
-                            <div class="time-item">
-                                <span><strong>${train.line}</strong> → ${train.dest}</span>
-                                <span class="arrival-time">${train.time}분 후</span>
-                            </div>
-                        `;
-                    });
-                    dongdaemunDiv.innerHTML = dongdaemunHtml;
+                    // API 실패시 에러 메시지
+                    if (dongdaemunDiv.innerHTML.includes('loading')) {
+                        dongdaemunDiv.innerHTML = '<div class="error">지하철 정보를 불러올 수 없습니다.</div>';
+                    }
                 }
                 
                 dongdaemunUpdateDiv.textContent = `마지막 업데이트: ${currentTime}`;
