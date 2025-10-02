@@ -179,15 +179,56 @@
         
         // 출퇴근 시작역 실시간 정보
         async function getStationInfo() {
+            const cheongnaDiv = document.getElementById('cheongna-info');
             const dongdaemunDiv = document.getElementById('dongdaemun-info');
+            const cheongnaUpdateDiv = document.getElementById('cheongna-update');
             const dongdaemunUpdateDiv = document.getElementById('dongdaemun-update');
             
             // 첫 로딩이 아닌 경우 기존 데이터 유지
+            if (cheongnaDiv && cheongnaDiv.innerHTML.includes('loading')) {
+                cheongnaDiv.innerHTML = '<div class="loading">정보를 불러오는 중...</div>';
+            }
             if (dongdaemunDiv.innerHTML.includes('loading')) {
                 dongdaemunDiv.innerHTML = '<div class="loading">정보를 불러오는 중...</div>';
             }
             
             const currentTime = new Date().toLocaleTimeString();
+            
+            // 청라국제도시역 실제 지하철 정보 (서울행만)
+            if (cheongnaDiv) {
+                try {
+                    const cheongnaResponse = await fetch('/api/subway?station=청라국제도시');
+                    const cheongnaResult = await cheongnaResponse.json();
+                    
+                    console.log('청라국제도시역 API 응답:', cheongnaResult);
+                    
+                    if (cheongnaResult.success && cheongnaResult.trains && cheongnaResult.trains.length > 0) {
+                        let cheongnaHtml = '';
+                        cheongnaResult.trains.forEach(train => {
+                            const arrivalInfo = train.status || `${train.arrivalTime}초 후`;
+                            cheongnaHtml += `
+                                <div class="time-item">
+                                    <span><strong>공항철도</strong> → ${train.destination}</span>
+                                    <span class="arrival-time">${arrivalInfo}</span>
+                                </div>
+                            `;
+                        });
+                        cheongnaDiv.innerHTML = cheongnaHtml;
+                    } else {
+                        cheongnaDiv.innerHTML = '<div class="error">서울행 열차 정보가 없습니다.</div>';
+                    }
+                    
+                    if (cheongnaUpdateDiv) {
+                        cheongnaUpdateDiv.textContent = `마지막 업데이트: ${currentTime}`;
+                    }
+                    
+                } catch (error) {
+                    console.error('청라국제도시역 API 오류:', error);
+                    if (cheongnaDiv.innerHTML.includes('loading')) {
+                        cheongnaDiv.innerHTML = '<div class="error">지하철 정보를 불러올 수 없습니다.</div>';
+                    }
+                }
+            }
             
             // 동대문역사문화공원역 실제 지하철 정보 (하행선만)
             try {
