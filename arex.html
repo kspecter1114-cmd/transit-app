@@ -129,7 +129,7 @@
         }
         
         // 출퇴근 시작역 실시간 정보
-        function getStationInfo() {
+        async function getStationInfo() {
             const cheongnaDiv = document.getElementById('cheongna-info');
             const dongdaemunDiv = document.getElementById('dongdaemun-info');
             const cheongnaUpdateDiv = document.getElementById('cheongna-update');
@@ -141,10 +141,10 @@
                 dongdaemunDiv.innerHTML = '<div class="loading">정보를 불러오는 중...</div>';
             }
             
+            const currentTime = new Date().toLocaleTimeString();
+            
+            // 청라국제도시역 공항철도 정보 (더미 데이터)
             setTimeout(() => {
-                const currentTime = new Date().toLocaleTimeString();
-                
-                // 청라국제도시역 공항철도 정보
                 const cheongnaTrains = [
                     { line: '공항철도', dest: '서울역', time: Math.floor(Math.random() * 8) + 2 },
                     { line: '공항철도', dest: '인천공항', time: Math.floor(Math.random() * 12) + 5 }
@@ -161,27 +161,54 @@
                 });
                 cheongnaDiv.innerHTML = cheongnaHtml;
                 cheongnaUpdateDiv.textContent = `마지막 업데이트: ${currentTime}`;
+            }, 500);
+            
+            // 동대문역사문화공원역 실제 지하철 정보
+            try {
+                const response = await fetch('/api/subway?station=동대문역사문화공원');
+                const result = await response.json();
                 
-                // 동대문역사문화공원역 지하철 정보
-                const dongdaemunTrains = [
-                    { line: '2호선', dest: '을지로입구', time: Math.floor(Math.random() * 5) + 1 },
-                    { line: '4호선', dest: '동대문', time: Math.floor(Math.random() * 6) + 2 },
-                    { line: '5호선', dest: '청구', time: Math.floor(Math.random() * 7) + 3 }
-                ];
+                if (result.success && result.trains.length > 0) {
+                    let dongdaemunHtml = '';
+                    // 최대 5개 열차만 표시
+                    result.trains.slice(0, 5).forEach(train => {
+                        const arrivalInfo = train.status.includes('분') ? train.status : `${train.arrivalTime}초 후`;
+                        dongdaemunHtml += `
+                            <div class="time-item">
+                                <span><strong>${train.line}</strong> → ${train.destination}</span>
+                                <span class="arrival-time">${arrivalInfo}</span>
+                            </div>
+                        `;
+                    });
+                    dongdaemunDiv.innerHTML = dongdaemunHtml;
+                } else {
+                    // API 실패시 더미 데이터
+                    const dongdaemunTrains = [
+                        { line: '2호선', dest: '을지로입구', time: Math.floor(Math.random() * 5) + 1 },
+                        { line: '4호선', dest: '동대문', time: Math.floor(Math.random() * 6) + 2 },
+                        { line: '5호선', dest: '청구', time: Math.floor(Math.random() * 7) + 3 }
+                    ];
+                    
+                    let dongdaemunHtml = '';
+                    dongdaemunTrains.forEach(train => {
+                        dongdaemunHtml += `
+                            <div class="time-item">
+                                <span><strong>${train.line}</strong> → ${train.dest}</span>
+                                <span class="arrival-time">${train.time}분 후</span>
+                            </div>
+                        `;
+                    });
+                    dongdaemunDiv.innerHTML = dongdaemunHtml;
+                }
                 
-                let dongdaemunHtml = '';
-                dongdaemunTrains.forEach(train => {
-                    dongdaemunHtml += `
-                        <div class="time-item">
-                            <span><strong>${train.line}</strong> → ${train.dest}</span>
-                            <span class="arrival-time">${train.time}분 후</span>
-                        </div>
-                    `;
-                });
-                dongdaemunDiv.innerHTML = dongdaemunHtml;
                 dongdaemunUpdateDiv.textContent = `마지막 업데이트: ${currentTime}`;
                 
-            }, 800);
+            } catch (error) {
+                console.error('지하철 API 오류:', error);
+                if (dongdaemunDiv.innerHTML.includes('loading')) {
+                    dongdaemunDiv.innerHTML = '<div class="error">지하철 정보를 불러올 수 없습니다.</div>';
+                }
+            }
         }
         
         // 공항철도 시간표 가져오기
