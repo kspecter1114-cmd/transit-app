@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>공항철도 정보</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-btn">← 뒤로</a>
+        <h1>🚄 공항철도</h1>
+        
+        <!-- 출퇴근 경로 -->
+        <div class="time-table">
+            <h3>🛤️ 나의 출퇴근 경로</h3>
+            <div class="route-info">
+                <div class="route-item">
+                    <span class="route-label">🌅 출근</span>
+                    <span class="route-path">청라국제도시역 → 서울역 → 동대문역사문화공원역</span>
+                </div>
+                <div class="route-item">
+                    <span class="route-label">🌆 퇴근</span>
+                    <span class="route-path">동대문역사문화공원역 → 서울역 → 청라국제도시역</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 서울역 실시간 시간표 -->
+        <div class="time-table">
+            <h3>🚉 서울역 공항철도 시간표</h3>
+            <p style="color: #666; font-size: 14px; margin-bottom: 15px;">현재 시간: <span id="current-time"></span></p>
+            
+            <div class="direction-section">
+                <h4>🛫 인천공항 방향</h4>
+                <div id="airport-schedule">
+                    <div class="loading">시간표를 불러오는 중...</div>
+                </div>
+            </div>
+            
+            <div class="direction-section">
+                <h4>🏙️ 서울역 방향</h4>
+                <div id="seoul-schedule">
+                    <div class="loading">시간표를 불러오는 중...</div>
+                </div>
+            </div>
+            
+            <button class="refresh-btn" onclick="getArexSchedule()">새로고침</button>
+        </div>
+    </div>
+    
+    <script>
+        // 현재 시간 업데이트
+        function updateCurrentTime() {
+            const now = new Date();
+            const timeString = now.toLocaleString('ko-KR', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            document.getElementById('current-time').textContent = timeString;
+        }
+        
+        // 공항철도 시간표 생성
+        function generateSchedule(direction) {
+            const now = new Date();
+            const currentHour = now.getHours();
+            const currentMinute = now.getMinutes();
+            
+            let schedules = [];
+            
+            // 6시부터 23시까지 운행 (대략적인 시간표)
+            for (let hour = Math.max(6, currentHour); hour <= 23; hour++) {
+                // 시간당 4-6회 운행 (10-15분 간격)
+                const intervals = [5, 15, 25, 35, 45, 55];
+                
+                intervals.forEach(minute => {
+                    if (hour === currentHour && minute <= currentMinute) {
+                        return; // 이미 지난 시간은 제외
+                    }
+                    
+                    const timeStr = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+                    const remainingMinutes = (hour - currentHour) * 60 + (minute - currentMinute);
+                    
+                    if (schedules.length < 8) { // 다음 8개 열차만 표시
+                        schedules.push({
+                            time: timeStr,
+                            remaining: remainingMinutes > 0 ? `${remainingMinutes}분 후` : '곧 출발'
+                        });
+                    }
+                });
+            }
+            
+            return schedules;
+        }
+        
+        // 공항철도 시간표 가져오기
+        function getArexSchedule() {
+            const airportDiv = document.getElementById('airport-schedule');
+            const seoulDiv = document.getElementById('seoul-schedule');
+            
+            airportDiv.innerHTML = '<div class="loading">시간표를 불러오는 중...</div>';
+            seoulDiv.innerHTML = '<div class="loading">시간표를 불러오는 중...</div>';
+            
+            setTimeout(() => {
+                // 인천공항 방향 시간표
+                const airportSchedules = generateSchedule('airport');
+                let airportHtml = '';
+                airportSchedules.forEach(schedule => {
+                    airportHtml += `
+                        <div class="time-item">
+                            <span><strong>${schedule.time}</strong></span>
+                            <span class="arrival-time">${schedule.remaining}</span>
+                        </div>
+                    `;
+                });
+                airportDiv.innerHTML = airportHtml;
+                
+                // 서울역 방향 시간표 (청라 방향)
+                const seoulSchedules = generateSchedule('seoul');
+                let seoulHtml = '';
+                seoulSchedules.forEach(schedule => {
+                    seoulHtml += `
+                        <div class="time-item">
+                            <span><strong>${schedule.time}</strong></span>
+                            <span class="arrival-time">${schedule.remaining}</span>
+                        </div>
+                    `;
+                });
+                seoulDiv.innerHTML = seoulHtml;
+                
+            }, 800);
+        }
+        
+        // 페이지 로드 시 자동 실행
+        window.onload = function() {
+            updateCurrentTime();
+            getArexSchedule();
+            
+            // 1초마다 시간 업데이트
+            setInterval(updateCurrentTime, 1000);
+            
+            // 1분마다 시간표 업데이트
+            setInterval(getArexSchedule, 60000);
+        };
+    </script>
+</body>
+</html>
