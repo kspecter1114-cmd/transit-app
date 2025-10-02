@@ -15,7 +15,9 @@ export default async function handler(req, res) {
         
         const data = await response.json();
         
-        console.log('API 응답:', JSON.stringify(data, null, 2)); // 디버깅용
+        console.log(`API 호출: ${station}`);
+        console.log('API 응답 상태:', response.status);
+        console.log('API 응답 데이터:', JSON.stringify(data, null, 2));
         
         if (data.realtimeArrivalList && data.realtimeArrivalList.length > 0) {
             let filteredTrains = data.realtimeArrivalList;
