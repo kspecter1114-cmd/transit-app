@@ -36,6 +36,7 @@
                 <div id="airport-schedule">
                     <div class="loading">시간표를 불러오는 중...</div>
                 </div>
+                <p id="airport-update" style="font-size: 11px; color: #999; text-align: right; margin-top: 5px;"></p>
             </div>
             
             <div class="direction-section">
@@ -43,6 +44,7 @@
                 <div id="seoul-schedule">
                     <div class="loading">시간표를 불러오는 중...</div>
                 </div>
+                <p id="seoul-update" style="font-size: 11px; color: #999; text-align: right; margin-top: 5px;"></p>
             </div>
             
             <button class="refresh-btn" onclick="getArexSchedule()">새로고침</button>
@@ -101,11 +103,18 @@
         function getArexSchedule() {
             const airportDiv = document.getElementById('airport-schedule');
             const seoulDiv = document.getElementById('seoul-schedule');
+            const airportUpdateDiv = document.getElementById('airport-update');
+            const seoulUpdateDiv = document.getElementById('seoul-update');
             
-            airportDiv.innerHTML = '<div class="loading">시간표를 불러오는 중...</div>';
-            seoulDiv.innerHTML = '<div class="loading">시간표를 불러오는 중...</div>';
+            // 첫 로딩이 아닌 경우 기존 데이터 유지
+            if (airportDiv.innerHTML.includes('loading')) {
+                airportDiv.innerHTML = '<div class="loading">시간표를 불러오는 중...</div>';
+                seoulDiv.innerHTML = '<div class="loading">시간표를 불러오는 중...</div>';
+            }
             
             setTimeout(() => {
+                const currentTime = new Date().toLocaleTimeString();
+                
                 // 인천공항 방향 시간표
                 const airportSchedules = generateSchedule('airport');
                 let airportHtml = '';
@@ -118,6 +127,7 @@
                     `;
                 });
                 airportDiv.innerHTML = airportHtml;
+                airportUpdateDiv.textContent = `마지막 업데이트: ${currentTime}`;
                 
                 // 서울역 방향 시간표 (청라 방향)
                 const seoulSchedules = generateSchedule('seoul');
@@ -131,6 +141,7 @@
                     `;
                 });
                 seoulDiv.innerHTML = seoulHtml;
+                seoulUpdateDiv.textContent = `마지막 업데이트: ${currentTime}`;
                 
             }, 800);
         }
