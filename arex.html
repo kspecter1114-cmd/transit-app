@@ -11,24 +11,9 @@
         <a href="index.html" class="back-btn">← 뒤로</a>
         <h1>🚄 공항철도</h1>
         
-        <!-- 출퇴근 경로 및 실시간 정보 -->
-        <div class="time-table">
-            <h3>🛤️ 나의 출퇴근 경로</h3>
-            <div class="route-info">
-                <div class="route-item">
-                    <span class="route-label">🌅 출근</span>
-                    <span class="route-path">청라국제도시역 → 서울역 → 동대문역사문화공원역</span>
-                </div>
-                <div class="route-item">
-                    <span class="route-label">🌆 퇴근</span>
-                    <span class="route-path">동대문역사문화공원역 → 서울역 → 청라국제도시역</span>
-                </div>
-            </div>
-        </div>
-
         <!-- 출퇴근 시작역 실시간 정보 -->
         <div class="time-table">
-            <h3>🚇 출퇴근 시작역 실시간 정보</h3>
+            <h3>🚇 출퇴근 지하철 실시간 정보</h3>
             
             <div class="direction-section">
                 <h4>🌅 청라국제도시역 (출근시) - 공항철도</h4>
@@ -151,26 +136,35 @@
             
             // 청라국제도시역 실제 지하철 정보 (서울행만)
             try {
-                const cheongnaResponse = await fetch('/api/subway?station=청라국제도시');
-                const cheongnaResult = await cheongnaResponse.json();
+                const cheongnaResponse = await fetch(
+                    `http://swopenapi.seoul.go.kr/api/subway/5047614f4c6b737037315850426b63/json/realtimeStationArrival/0/20/청라국제도시/`,
+                    { mode: 'cors' }
+                );
+                const cheongnaData = await cheongnaResponse.json();
                 
-                if (cheongnaResult.success && cheongnaResult.trains.length > 0) {
-                    let cheongnaHtml = '';
-                    cheongnaResult.trains.forEach(train => {
-                        const arrivalInfo = train.status || `${train.arrivalTime}초 후`;
-                        cheongnaHtml += `
-                            <div class="time-item">
-                                <span><strong>공항철도</strong> → ${train.destination}</span>
-                                <span class="arrival-time">${arrivalInfo}</span>
-                            </div>
-                        `;
-                    });
-                    cheongnaDiv.innerHTML = cheongnaHtml;
-                } else {
-                    // API 실패시 에러 메시지
-                    if (cheongnaDiv.innerHTML.includes('loading')) {
-                        cheongnaDiv.innerHTML = '<div class="error">지하철 정보를 불러올 수 없습니다.</div>';
+                if (cheongnaData.realtimeArrivalList && cheongnaData.realtimeArrivalList.length > 0) {
+                    // 서울행만 필터링
+                    const seoulTrains = cheongnaData.realtimeArrivalList.filter(train => 
+                        train.trainLineNm.includes('서울') && !train.trainLineNm.includes('인천공항')
+                    );
+                    
+                    if (seoulTrains.length > 0) {
+                        let cheongnaHtml = '';
+                        seoulTrains.forEach(train => {
+                            const arrivalInfo = train.arvlMsg2 || train.arvlMsg3 || `${train.barvlDt}초 후`;
+                            cheongnaHtml += `
+                                <div class="time-item">
+                                    <span><strong>공항철도</strong> → ${train.trainLineNm}</span>
+                                    <span class="arrival-time">${arrivalInfo}</span>
+                                </div>
+                            `;
+                        });
+                        cheongnaDiv.innerHTML = cheongnaHtml;
+                    } else {
+                        cheongnaDiv.innerHTML = '<div class="error">서울행 열차 정보가 없습니다.</div>';
                     }
+                } else {
+                    cheongnaDiv.innerHTML = '<div class="error">지하철 정보를 불러올 수 없습니다.</div>';
                 }
                 
                 cheongnaUpdateDiv.textContent = `마지막 업데이트: ${currentTime}`;
@@ -184,32 +178,43 @@
             
             // 동대문역사문화공원역 실제 지하철 정보 (4호선 하행선만)
             try {
-                const response = await fetch('/api/subway?station=동대문역사문화공원');
-                const result = await response.json();
+                const dongdaemunResponse = await fetch(
+                    `http://swopenapi.seoul.go.kr/api/subway/5047614f4c6b737037315850426b63/json/realtimeStationArrival/0/20/동대문역사문화공원/`,
+                    { mode: 'cors' }
+                );
+                const dongdaemunData = await dongdaemunResponse.json();
                 
-                if (result.success && result.trains.length > 0) {
-                    let dongdaemunHtml = '';
-                    result.trains.forEach(train => {
-                        const arrivalInfo = train.status || `${train.arrivalTime}초 후`;
-                        dongdaemunHtml += `
-                            <div class="time-item">
-                                <span><strong>${train.line}</strong> → ${train.destination}</span>
-                                <span class="arrival-time">${arrivalInfo}</span>
-                            </div>
-                        `;
-                    });
-                    dongdaemunDiv.innerHTML = dongdaemunHtml;
-                } else {
-                    // API 실패시 에러 메시지
-                    if (dongdaemunDiv.innerHTML.includes('loading')) {
-                        dongdaemunDiv.innerHTML = '<div class="error">지하철 정보를 불러올 수 없습니다.</div>';
+                if (dongdaemunData.realtimeArrivalList && dongdaemunData.realtimeArrivalList.length > 0) {
+                    // 4호선 하행선(오이도행, 사당행)만 필터링
+                    const line4Trains = dongdaemunData.realtimeArrivalList.filter(train => 
+                        train.subwayId === '4' && 
+                        train.updnLine === '하행' && 
+                        (train.trainLineNm.includes('오이도') || train.trainLineNm.includes('사당'))
+                    );
+                    
+                    if (line4Trains.length > 0) {
+                        let dongdaemunHtml = '';
+                        line4Trains.forEach(train => {
+                            const arrivalInfo = train.arvlMsg2 || train.arvlMsg3 || `${train.barvlDt}초 후`;
+                            dongdaemunHtml += `
+                                <div class="time-item">
+                                    <span><strong>4호선</strong> → ${train.trainLineNm}</span>
+                                    <span class="arrival-time">${arrivalInfo}</span>
+                                </div>
+                            `;
+                        });
+                        dongdaemunDiv.innerHTML = dongdaemunHtml;
+                    } else {
+                        dongdaemunDiv.innerHTML = '<div class="error">4호선 하행 열차 정보가 없습니다.</div>';
                     }
+                } else {
+                    dongdaemunDiv.innerHTML = '<div class="error">지하철 정보를 불러올 수 없습니다.</div>';
                 }
                 
                 dongdaemunUpdateDiv.textContent = `마지막 업데이트: ${currentTime}`;
                 
             } catch (error) {
-                console.error('지하철 API 오류:', error);
+                console.error('동대문역사문화공원역 API 오류:', error);
                 if (dongdaemunDiv.innerHTML.includes('loading')) {
                     dongdaemunDiv.innerHTML = '<div class="error">지하철 정보를 불러올 수 없습니다.</div>';
                 }
