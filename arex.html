@@ -28,18 +28,10 @@
 
         <!-- 출퇴근 시작역 실시간 정보 -->
         <div class="time-table">
-            <h3>🚇 출퇴근 시작역 실시간 정보</h3>
+            <h3>🚇 퇴근 시작역 실시간 정보</h3>
             
             <div class="direction-section">
-                <h4>🌅 청라국제도시역 (출근시)</h4>
-                <div id="cheongna-info">
-                    <div class="loading">정보를 불러오는 중...</div>
-                </div>
-                <p id="cheongna-update" style="font-size: 11px; color: #999; text-align: right; margin-top: 5px;"></p>
-            </div>
-            
-            <div class="direction-section">
-                <h4>🌆 동대문역사문화공원역 (퇴근시)</h4>
+                <h4>🌆 동대문역사문화공원역 (퇴근시) - 4호선</h4>
                 <div id="dongdaemun-info">
                     <div class="loading">정보를 불러오는 중...</div>
                 </div>
@@ -130,63 +122,26 @@
         
         // 출퇴근 시작역 실시간 정보
         async function getStationInfo() {
-            const cheongnaDiv = document.getElementById('cheongna-info');
             const dongdaemunDiv = document.getElementById('dongdaemun-info');
-            const cheongnaUpdateDiv = document.getElementById('cheongna-update');
             const dongdaemunUpdateDiv = document.getElementById('dongdaemun-update');
             
             // 첫 로딩이 아닌 경우 기존 데이터 유지
-            if (cheongnaDiv.innerHTML.includes('loading')) {
-                cheongnaDiv.innerHTML = '<div class="loading">정보를 불러오는 중...</div>';
+            if (dongdaemunDiv.innerHTML.includes('loading')) {
                 dongdaemunDiv.innerHTML = '<div class="loading">정보를 불러오는 중...</div>';
             }
             
             const currentTime = new Date().toLocaleTimeString();
             
-            // 청라국제도시역 실제 지하철 정보
-            try {
-                const cheongnaResponse = await fetch('/api/subway?station=청라국제도시');
-                const cheongnaResult = await cheongnaResponse.json();
-                
-                if (cheongnaResult.success && cheongnaResult.trains.length > 0) {
-                    let cheongnaHtml = '';
-                    // 최대 4개 열차만 표시
-                    cheongnaResult.trains.slice(0, 4).forEach(train => {
-                        const arrivalInfo = train.status.includes('분') ? train.status : `${train.arrivalTime}초 후`;
-                        cheongnaHtml += `
-                            <div class="time-item">
-                                <span><strong>${train.line}</strong> → ${train.destination}</span>
-                                <span class="arrival-time">${arrivalInfo}</span>
-                            </div>
-                        `;
-                    });
-                    cheongnaDiv.innerHTML = cheongnaHtml;
-                } else {
-                    // API 실패시 에러 메시지
-                    if (cheongnaDiv.innerHTML.includes('loading')) {
-                        cheongnaDiv.innerHTML = '<div class="error">지하철 정보를 불러올 수 없습니다.</div>';
-                    }
-                }
-                
-                cheongnaUpdateDiv.textContent = `마지막 업데이트: ${currentTime}`;
-                
-            } catch (error) {
-                console.error('청라국제도시역 API 오류:', error);
-                if (cheongnaDiv.innerHTML.includes('loading')) {
-                    cheongnaDiv.innerHTML = '<div class="error">지하철 정보를 불러올 수 없습니다.</div>';
-                }
-            }
-            
-            // 동대문역사문화공원역 실제 지하철 정보
+            // 동대문역사문화공원역 실제 지하철 정보 (4호선만)
             try {
                 const response = await fetch('/api/subway?station=동대문역사문화공원');
                 const result = await response.json();
                 
                 if (result.success && result.trains.length > 0) {
                     let dongdaemunHtml = '';
-                    // 최대 5개 열차만 표시
-                    result.trains.slice(0, 5).forEach(train => {
-                        const arrivalInfo = train.status.includes('분') ? train.status : `${train.arrivalTime}초 후`;
+                    // 4호선 열차만 표시
+                    result.trains.forEach(train => {
+                        const arrivalInfo = train.status || `${train.arrivalTime}초 후`;
                         dongdaemunHtml += `
                             <div class="time-item">
                                 <span><strong>${train.line}</strong> → ${train.destination}</span>
