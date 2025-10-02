@@ -28,11 +28,13 @@ export default async function handler(req, res) {
                     (train.trainLineNm.includes('오이도') || train.trainLineNm.includes('사당'))
                 );
             } else if (station === '청라국제도시') {
-                // 공항철도 서울행만 필터링 (인천공항행, 청라국제도시 출발 제외)
+                // 서울행만 필터링 (청라국제도시 출발, 인천공항행 모두 제외)
                 filteredTrains = data.realtimeArrivalList.filter(train => 
                     train.trainLineNm.includes('서울') && 
                     !train.trainLineNm.includes('인천공항') &&
-                    !train.trainLineNm.includes('청라국제도시')
+                    !train.trainLineNm.includes('청라국제도시 출발') &&
+                    !train.trainLineNm.includes('청라국제도시역 출발') &&
+                    train.updnLine === '상행'
                 );
             }
             
