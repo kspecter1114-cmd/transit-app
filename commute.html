@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>출퇴근 정보</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-btn">← 뒤로</a>
+        <h1>🚗 출퇴근 정보</h1>
+        
+        <!-- 출근 정보 -->
+        <div class="time-table">
+            <h3>🌅 출근 - 정류장 89295</h3>
+            <p id="morning-station" style="color: #666; font-size: 14px; margin-bottom: 15px;">정류장명: 청라커낼웨이</p>
+            <div id="morning-info">
+                <div class="loading">정보를 불러오는 중...</div>
+            </div>
+            <button class="refresh-btn" onclick="getMorningBus()">새로고침</button>
+        </div>
+        
+        <!-- 퇴근 정보 -->
+        <div class="time-table">
+            <h3>🌆 퇴근 - 정류장 89215</h3>
+            <p id="evening-station" style="color: #666; font-size: 14px; margin-bottom: 15px;">정류장명: 청라국제도시역</p>
+            <div id="evening-info">
+                <div class="loading">정보를 불러오는 중...</div>
+            </div>
+            <button class="refresh-btn" onclick="getEveningBus()">새로고침</button>
+        </div>
+    </div>
+    
+    <script>
+        // 정류장명 가져오기
+        async function getStationName(stationId, elementId) {
+            try {
+                const response = await fetch(`/api/station?stationId=${stationId}`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    document.querySelector(`#${elementId}`).textContent = `정류장명: ${result.stationName}`;
+                }
+            } catch (error) {
+                console.log('정류장명 조회 실패');
+            }
+        }
+        
+        // 출근 버스 정보
+        async function getMorningBus() {
+            const infoDiv = document.getElementById('morning-info');
+            infoDiv.innerHTML = '<div class="loading">정보를 불러오는 중...</div>';
+            
+            try {
+                // API 복구 전까지 더미 데이터
+                setTimeout(() => {
+                    const currentTime = new Date().toLocaleTimeString();
+                    infoDiv.innerHTML = `
+                        <div class="time-item">
+                            <span><strong>701번</strong></span>
+                            <span class="arrival-time">${Math.floor(Math.random() * 10) + 1}분 후</span>
+                        </div>
+                        <div class="time-item">
+                            <span><strong>908번</strong></span>
+                            <span class="arrival-time">${Math.floor(Math.random() * 15) + 3}분 후</span>
+                        </div>
+                        <div class="time-item">
+                            <span><strong>111번</strong></span>
+                            <span class="arrival-time">${Math.floor(Math.random() * 20) + 5}분 후</span>
+                        </div>
+                        <div class="time-item">
+                            <span style="font-size: 12px; color: #999;">업데이트: ${currentTime}</span>
+                            <span></span>
+                        </div>
+                    `;
+                }, 800);
+            } catch (error) {
+                infoDiv.innerHTML = '<div class="error">정보를 불러올 수 없습니다.</div>';
+            }
+        }
+        
+        // 퇴근 버스 정보
+        async function getEveningBus() {
+            const infoDiv = document.getElementById('evening-info');
+            infoDiv.innerHTML = '<div class="loading">정보를 불러오는 중...</div>';
+            
+            try {
+                // API 복구 전까지 더미 데이터
+                setTimeout(() => {
+                    const currentTime = new Date().toLocaleTimeString();
+                    infoDiv.innerHTML = `
+                        <div class="time-item">
+                            <span><strong>701번</strong></span>
+                            <span class="arrival-time">${Math.floor(Math.random() * 8) + 2}분 후</span>
+                        </div>
+                        <div class="time-item">
+                            <span><strong>760번</strong></span>
+                            <span class="arrival-time">${Math.floor(Math.random() * 12) + 4}분 후</span>
+                        </div>
+                        <div class="time-item">
+                            <span><strong>간선급행1번</strong></span>
+                            <span class="arrival-time">${Math.floor(Math.random() * 18) + 6}분 후</span>
+                        </div>
+                        <div class="time-item">
+                            <span style="font-size: 12px; color: #999;">업데이트: ${currentTime}</span>
+                            <span></span>
+                        </div>
+                    `;
+                }, 800);
+            } catch (error) {
+                infoDiv.innerHTML = '<div class="error">정보를 불러올 수 없습니다.</div>';
+            }
+        }
+        
+        // 페이지 로드 시 자동 실행
+        window.onload = function() {
+            // 정류장명 가져오기
+            getStationName('89295', 'morning-station');
+            getStationName('89215', 'evening-station');
+            
+            getMorningBus();
+            getEveningBus();
+            
+            // 30초마다 자동 새로고침
+            setInterval(() => {
+                getMorningBus();
+                getEveningBus();
+            }, 30000);
+        };
+    </script>
+</body>
+</html>
