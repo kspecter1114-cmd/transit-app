@@ -31,15 +31,15 @@ export default async function handler(req, res) {
         });
         
     } catch (error) {
-        // API 복구 전까지 더미 데이터
-        const dummyStations = {
-            '89215': '청라국제도시역',
-            '89295': '청라커낼웨이'
+        // API 복구 전까지 정확한 정류장명 제공
+        const stationInfo = {
+            '89215': '청라국제도시역(청라국제교방향)',
+            '89295': '청라센텀로제비앙'
         };
         
         res.status(200).json({
             success: true,
-            stationName: dummyStations[stationId] || '정류장명 확인 중',
+            stationName: stationInfo[stationId] || '정류장명 확인 중',
             buses: []
         });
     }
