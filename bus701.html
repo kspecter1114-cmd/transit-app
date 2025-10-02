@@ -11,15 +11,87 @@
         <a href="index.html" class="back-btn">← 뒤로</a>
         <h1>🚌 701번 버스</h1>
         
-        <!-- 시간표 이미지 -->
+        <!-- 시간표 -->
         <div class="time-table">
             <h3>📋 701번 버스 시간표</h3>
-            <div class="timetable-image">
-                <img src="https://i.namu.wiki/i/9f5d0w92TP_8a7UGtK62qH65iHdY8wK441zmTI-54TZsuabsPBuvxk4e0__YMBRoR4XVeueOnz0jZrLbzEKXCW_7wkZXhenaNILx1Ma40VwicLN70_QWfQRjt4DRIdRKX00BZVVJ7cAKJDLg4jbgjA.webp" 
-                     alt="701번 버스 시간표" 
-                     style="width: 100%; height: auto; border-radius: 8px;">
+            <p style="color: #666; font-size: 14px; margin-bottom: 15px;">청라 → 인천 방향</p>
+            
+            <div class="direction-section">
+                <h4>🌅 평일 운행시간</h4>
+                <div id="weekday-schedule">
+                    <!-- 평일 시간표가 여기에 표시됩니다 -->
+                    <div class="loading">시간표 데이터를 입력해주세요</div>
+                </div>
             </div>
+            
+            <div class="direction-section">
+                <h4>🌆 주말/공휴일 운행시간</h4>
+                <div id="weekend-schedule">
+                    <!-- 주말 시간표가 여기에 표시됩니다 -->
+                    <div class="loading">시간표 데이터를 입력해주세요</div>
+                </div>
+            </div>
+            
+            <p style="font-size: 11px; color: #999; text-align: center; margin-top: 15px;">
+                운행구간: 청라국제도시 ↔ 인천터미널<br>
+                배차간격: 평일 10-15분, 주말 15-20분
+            </p>
         </div>
     </div>
+    
+    <script>
+        // 701번 버스 시간표 데이터 (입력 대기 중)
+        const bus701Schedule = {
+            weekday: {
+                // 평일 시간표 - 데이터 입력 필요
+                firstBus: "05:30",
+                lastBus: "23:00",
+                times: [] // 시간 배열 입력 필요
+            },
+            weekend: {
+                // 주말 시간표 - 데이터 입력 필요
+                firstBus: "06:00",
+                lastBus: "22:30",
+                times: [] // 시간 배열 입력 필요
+            }
+        };
+        
+        // 시간표 표시 함수
+        function displaySchedule() {
+            const weekdayDiv = document.getElementById('weekday-schedule');
+            const weekendDiv = document.getElementById('weekend-schedule');
+            
+            // 평일 시간표
+            if (bus701Schedule.weekday.times.length > 0) {
+                let weekdayHtml = `<p style="margin-bottom: 10px;"><strong>첫차:</strong> ${bus701Schedule.weekday.firstBus} | <strong>막차:</strong> ${bus701Schedule.weekday.lastBus}</p>`;
+                weekdayHtml += '<div class="schedule-grid">';
+                
+                bus701Schedule.weekday.times.forEach(time => {
+                    weekdayHtml += `<span class="time-badge">${time}</span>`;
+                });
+                
+                weekdayHtml += '</div>';
+                weekdayDiv.innerHTML = weekdayHtml;
+            }
+            
+            // 주말 시간표
+            if (bus701Schedule.weekend.times.length > 0) {
+                let weekendHtml = `<p style="margin-bottom: 10px;"><strong>첫차:</strong> ${bus701Schedule.weekend.firstBus} | <strong>막차:</strong> ${bus701Schedule.weekend.lastBus}</p>`;
+                weekendHtml += '<div class="schedule-grid">';
+                
+                bus701Schedule.weekend.times.forEach(time => {
+                    weekendHtml += `<span class="time-badge">${time}</span>`;
+                });
+                
+                weekendHtml += '</div>';
+                weekendDiv.innerHTML = weekendHtml;
+            }
+        }
+        
+        // 페이지 로드 시 실행
+        window.onload = function() {
+            displaySchedule();
+        };
+    </script>
 </body>
 </html>
