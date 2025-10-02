@@ -15,7 +15,9 @@ export default async function handler(req, res) {
         
         const data = await response.json();
         
-        if (data.realtimeArrivalList) {
+        console.log('API 응답:', JSON.stringify(data, null, 2)); // 디버깅용
+        
+        if (data.realtimeArrivalList && data.realtimeArrivalList.length > 0) {
             let filteredTrains = data.realtimeArrivalList;
             
             // 역별 필터링
@@ -27,9 +29,9 @@ export default async function handler(req, res) {
                     (train.trainLineNm.includes('오이도') || train.trainLineNm.includes('사당'))
                 );
             } else if (station === '청라국제도시') {
-                // 서울행만 필터링 (상행선)
+                // 공항철도 서울행만 필터링 (인천공항행 제외)
                 filteredTrains = data.realtimeArrivalList.filter(train => 
-                    train.updnLine === '상행' || train.trainLineNm.includes('서울')
+                    train.trainLineNm.includes('서울') && !train.trainLineNm.includes('인천공항')
                 );
             }
             
@@ -48,9 +50,11 @@ export default async function handler(req, res) {
                 trains: trains
             });
         } else {
+            console.log('API 응답 구조:', data); // 디버깅용
             res.status(200).json({
                 success: false,
-                error: '지하철 정보를 찾을 수 없습니다.'
+                error: '지하철 정보를 찾을 수 없습니다.',
+                debug: data
             });
         }
         
