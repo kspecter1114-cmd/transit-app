@@ -10,7 +10,7 @@ export default async function handler(req, res) {
         
         // 서울교통공사 실시간 지하철 도착정보 API
         const response = await fetch(
-            `http://swopenapi.seoul.go.kr/api/subway/${apiKey}/json/realtimeStationArrival/1/10/${encodeURIComponent(station)}/`
+            `http://swopenapi.seoul.go.kr/api/subway/${apiKey}/json/realtimeStationArrival/0/20/${encodeURIComponent(station)}/`
         );
         
         const data = await response.json();
