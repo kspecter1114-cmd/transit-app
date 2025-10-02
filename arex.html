@@ -143,25 +143,51 @@
             
             const currentTime = new Date().toLocaleTimeString();
             
-            // 청라국제도시역 공항철도 정보 (더미 데이터)
-            setTimeout(() => {
-                const cheongnaTrains = [
-                    { line: '공항철도', dest: '서울역', time: Math.floor(Math.random() * 8) + 2 },
-                    { line: '공항철도', dest: '인천공항', time: Math.floor(Math.random() * 12) + 5 }
-                ];
+            // 청라국제도시역 실제 지하철 정보
+            try {
+                const cheongnaResponse = await fetch('/api/subway?station=청라국제도시');
+                const cheongnaResult = await cheongnaResponse.json();
                 
-                let cheongnaHtml = '';
-                cheongnaTrains.forEach(train => {
-                    cheongnaHtml += `
-                        <div class="time-item">
-                            <span><strong>${train.line}</strong> → ${train.dest}</span>
-                            <span class="arrival-time">${train.time}분 후</span>
-                        </div>
-                    `;
-                });
-                cheongnaDiv.innerHTML = cheongnaHtml;
+                if (cheongnaResult.success && cheongnaResult.trains.length > 0) {
+                    let cheongnaHtml = '';
+                    // 최대 4개 열차만 표시
+                    cheongnaResult.trains.slice(0, 4).forEach(train => {
+                        const arrivalInfo = train.status.includes('분') ? train.status : `${train.arrivalTime}초 후`;
+                        cheongnaHtml += `
+                            <div class="time-item">
+                                <span><strong>${train.line}</strong> → ${train.destination}</span>
+                                <span class="arrival-time">${arrivalInfo}</span>
+                            </div>
+                        `;
+                    });
+                    cheongnaDiv.innerHTML = cheongnaHtml;
+                } else {
+                    // API 실패시 더미 데이터
+                    const cheongnaTrains = [
+                        { line: '공항철도', dest: '서울역', time: Math.floor(Math.random() * 8) + 2 },
+                        { line: '공항철도', dest: '인천공항', time: Math.floor(Math.random() * 12) + 5 }
+                    ];
+                    
+                    let cheongnaHtml = '';
+                    cheongnaTrains.forEach(train => {
+                        cheongnaHtml += `
+                            <div class="time-item">
+                                <span><strong>${train.line}</strong> → ${train.dest}</span>
+                                <span class="arrival-time">${train.time}분 후</span>
+                            </div>
+                        `;
+                    });
+                    cheongnaDiv.innerHTML = cheongnaHtml;
+                }
+                
                 cheongnaUpdateDiv.textContent = `마지막 업데이트: ${currentTime}`;
-            }, 500);
+                
+            } catch (error) {
+                console.error('청라국제도시역 API 오류:', error);
+                if (cheongnaDiv.innerHTML.includes('loading')) {
+                    cheongnaDiv.innerHTML = '<div class="error">지하철 정보를 불러올 수 없습니다.</div>';
+                }
+            }
             
             // 동대문역사문화공원역 실제 지하철 정보
             try {
