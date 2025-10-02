@@ -44,16 +44,7 @@
             <div class="direction-section">
                 <h4>🛫 서울역 출발 → 인천공항 방향</h4>
                 <div id="seoul-departure-schedule">
-                    <div class="time-item"><span><strong>05:20</strong> → 인천공항</span><span>직통</span></div>
-                    <div class="time-item"><span><strong>05:53</strong> → 인천공항</span><span>일반</span></div>
-                    <div class="time-item"><span><strong>06:00</strong> → 인천공항</span><span>직통</span></div>
-                    <div class="time-item"><span><strong>06:13</strong> → 인천공항</span><span>일반</span></div>
-                    <div class="time-item"><span><strong>06:20</strong> → 인천공항</span><span>직통</span></div>
-                    <div class="time-item"><span><strong>06:33</strong> → 인천공항</span><span>일반</span></div>
-                    <div class="time-item"><span><strong>06:40</strong> → 인천공항</span><span>직통</span></div>
-                    <div class="time-item"><span><strong>06:53</strong> → 인천공항</span><span>일반</span></div>
-                    <div class="time-item"><span><strong>07:00</strong> → 인천공항</span><span>직통</span></div>
-                    <div class="time-item"><span><strong>07:13</strong> → 인천공항</span><span>일반</span></div>
+                    <!-- 현재 시간 이후 시간표가 JavaScript로 동적 생성됩니다 -->
                 </div>
                 <p style="font-size: 11px; color: #999; text-align: center; margin-top: 10px;">
                     직통: 43분 소요 | 일반: 56분 소요<br>
@@ -76,6 +67,74 @@
                 second: '2-digit'
             });
             document.getElementById('current-time').textContent = timeString;
+        }
+        
+        // 현재 시간 이후 공항철도 시간표 생성
+        function generateArexSchedule() {
+            const now = new Date();
+            const currentHour = now.getHours();
+            const currentMinute = now.getMinutes();
+            
+            // 공항철도 시간표 (대략적인 운행 시간)
+            const baseSchedule = [
+                { time: '05:20', type: '직통' }, { time: '05:53', type: '일반' },
+                { time: '06:00', type: '직통' }, { time: '06:13', type: '일반' },
+                { time: '06:20', type: '직통' }, { time: '06:33', type: '일반' },
+                { time: '06:40', type: '직통' }, { time: '06:53', type: '일반' },
+                { time: '07:00', type: '직통' }, { time: '07:13', type: '일반' },
+                { time: '07:20', type: '직통' }, { time: '07:33', type: '일반' },
+                { time: '07:40', type: '직통' }, { time: '07:53', type: '일반' },
+                { time: '08:00', type: '직통' }, { time: '08:13', type: '일반' },
+                { time: '08:20', type: '직통' }, { time: '08:33', type: '일반' },
+                { time: '08:40', type: '직통' }, { time: '08:53', type: '일반' },
+                { time: '09:00', type: '직통' }, { time: '09:20', type: '직통' },
+                { time: '09:40', type: '직통' }, { time: '10:00', type: '직통' },
+                { time: '10:20', type: '직통' }, { time: '10:40', type: '직통' },
+                { time: '11:00', type: '직통' }, { time: '11:20', type: '직통' },
+                { time: '11:40', type: '직통' }, { time: '12:00', type: '직통' },
+                { time: '12:20', type: '직통' }, { time: '12:40', type: '직통' },
+                { time: '13:00', type: '직통' }, { time: '13:20', type: '직통' },
+                { time: '13:40', type: '직통' }, { time: '14:00', type: '직통' },
+                { time: '14:20', type: '직통' }, { time: '14:40', type: '직통' },
+                { time: '15:00', type: '직통' }, { time: '15:20', type: '직통' },
+                { time: '15:40', type: '직통' }, { time: '16:00', type: '직통' },
+                { time: '16:20', type: '직통' }, { time: '16:40', type: '직통' },
+                { time: '17:00', type: '직통' }, { time: '17:20', type: '직통' },
+                { time: '17:40', type: '직통' }, { time: '18:00', type: '직통' },
+                { time: '18:20', type: '직통' }, { time: '18:40', type: '직통' },
+                { time: '19:00', type: '직통' }, { time: '19:20', type: '직통' },
+                { time: '19:40', type: '직통' }, { time: '20:00', type: '직통' },
+                { time: '20:20', type: '직통' }, { time: '20:40', type: '직통' },
+                { time: '21:00', type: '직통' }, { time: '21:20', type: '직통' },
+                { time: '21:40', type: '직통' }, { time: '22:00', type: '직통' },
+                { time: '22:20', type: '직통' }, { time: '22:40', type: '직통' },
+                { time: '23:00', type: '직통' }, { time: '23:20', type: '직통' },
+                { time: '23:48', type: '직통' }
+            ];
+            
+            // 현재 시간 이후 시간표만 필터링
+            const futureSchedule = baseSchedule.filter(item => {
+                const [hour, minute] = item.time.split(':').map(Number);
+                return hour > currentHour || (hour === currentHour && minute > currentMinute);
+            }).slice(0, 10); // 다음 10개만 표시
+            
+            const scheduleDiv = document.getElementById('seoul-departure-schedule');
+            let html = '';
+            
+            futureSchedule.forEach(item => {
+                html += `
+                    <div class="time-item">
+                        <span><strong>${item.time}</strong> → 인천공항</span>
+                        <span>${item.type}</span>
+                    </div>
+                `;
+            });
+            
+            if (futureSchedule.length === 0) {
+                html = '<div class="error">오늘 운행이 종료되었습니다.</div>';
+            }
+            
+            scheduleDiv.innerHTML = html;
         }
         
         // 공항철도 시간표 생성 (행선지 포함)
@@ -179,7 +238,7 @@
                         const arrivalInfo = train.status || `${train.arrivalTime}초 후`;
                         dongdaemunHtml += `
                             <div class="time-item">
-                                <span><strong>${train.line}</strong> → ${train.destination}</span>
+                                <span><strong>${train.destination}</strong></span>
                                 <span class="arrival-time">${arrivalInfo}</span>
                             </div>
                         `;
@@ -249,12 +308,16 @@
         // 페이지 로드 시 자동 실행
         window.onload = function() {
             updateCurrentTime();
+            generateArexSchedule();
             getStationInfo();
             
             // 1초마다 시간 업데이트
             setInterval(updateCurrentTime, 1000);
             
-            // 5초마다 출퇴근 시작역 정보만 업데이트 (서울역 시간표는 고정)
+            // 1분마다 공항철도 시간표 업데이트
+            setInterval(generateArexSchedule, 60000);
+            
+            // 5초마다 출퇴근 시작역 정보만 업데이트
             setInterval(getStationInfo, 5000);
         };
     </script>

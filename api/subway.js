@@ -36,7 +36,6 @@ export default async function handler(req, res) {
             
             // 필요한 정보만 추출
             const trains = filteredTrains.map(train => ({
-                line: train.subwayId + '호선',
                 destination: train.trainLineNm,
                 arrivalTime: train.barvlDt,
                 status: train.arvlMsg2 || train.arvlMsg3,
