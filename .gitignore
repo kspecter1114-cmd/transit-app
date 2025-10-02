@@ -1,0 +1,25 @@
+# 로컬 테스트 서버
+local-server/
+test-server.js
+package.json
+package-lock.json
+node_modules/
+
+# 환경 변수
+.env
+.env.local
+
+# 로그 파일
+*.log
+
+# 임시 파일
+*.tmp
+*.temp
+
+# IDE 설정
+.vscode/
+.idea/
+
+# OS 파일
+.DS_Store
+Thumbs.db
